@@ -7,6 +7,8 @@ The code in `ieee-packing.hpp` serializes single and double precision floating p
 
 ieee754 uses 8 and 11 bits for the exponents of (respectively) floats and doubles. If your hardware does not use this many bits in its representation, then there will be a further loss of precision. This will be indicated by a failure in one of the test cases.
 
+*Note* the packed result is an unsigned integer in the _byte order of your platform_. Thus, when swapping numbers between little endian and big endian systems, it is imperative to fix the byte order. For example, use the macros in `<endian.h>`.
+
 ## testing
 
 ```

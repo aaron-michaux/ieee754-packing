@@ -44,7 +44,7 @@ template<typename F, int EXP_DIG> auto pack_float(const F value)
    } else {
       // Unpack the value
       exponent = 0;
-      fraction = frexp(value, &exponent);
+      fraction = std::frexp(value, &exponent);
       if(fraction != F(0.0)) exponent -= 1;
       sign_bit = std::signbit(fraction);
 
@@ -137,9 +137,6 @@ template<typename I, int EXP_DIG> auto unpack_float(const I packed)
    constexpr I shift_mask = ((I(1) << shift) - 1) << (total_bits - shift);
    constexpr F mult       = F(I(1) << shift);
    constexpr F div        = F(1.0) / mult;
-
-   constexpr int max_parts
-       = (fraction_bits / shift) + (fraction_bits % shift == 0 ? 0 : 1);
 
    auto frac_int = I((packed_fraction0 & shift_mask) >> (total_bits - shift));
 

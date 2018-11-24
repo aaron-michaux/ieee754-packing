@@ -33,3 +33,13 @@ int main(int, char**)
    printf("   Error:          %a\n", fabs(value - unpacked)); // 0.0
 }
 ```
+
+Output is:
+
+```
+   Number is:      3.141593
+   Number (hex):   0x1.921fb54442d18p+1
+   Packed value:   0x400921fb54442d18
+   Unpacked (hex): 0x1.921fb54442d18p+1
+   Error:          0x0p+0
+```

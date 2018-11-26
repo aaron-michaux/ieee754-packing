@@ -10,19 +10,18 @@ template<typename T> void test_float(const T value)
 {
    T out;
 
-   // const auto p1 = pack_float(value);
-   // decltype(pack_float(value)) p2;
-   // if constexpr(sizeof(T) == 4)
-   //    p2 = detail::pack_float<float, 8>(value);
-   // else
-   //    p2 = detail::pack_float<double, 11>(value);
-
-   // const auto pattern = (sizeof(T) == 4) ? "  0x%08x\n" : "  0x%016lx\n";
-
-   // printf("------------------------ %a\n", value);
-   // printf(pattern, p1);
-   // printf(pattern, p2);
-   // printf("\n");
+   { // Check that bitcasting is equivalent
+#ifdef __STDC_IEC_559__
+      using I = typename std::conditional_t<sizeof(T) == 8, uint64_t, uint32_t>;
+      const auto p1 = *reinterpret_cast<const I*>(&value);
+      decltype(pack_float(value)) p2;
+      if constexpr(sizeof(T) == 4)
+         p2 = detail::pack_float<T, 8>(value);
+      else
+         p2 = detail::pack_float<T, 11>(value);
+      CATCH_REQUIRE(p1 == p2);
+#endif
+   }
 
    if constexpr(sizeof(T) == 4) {
       out = unpack_f32(pack_f32(value));

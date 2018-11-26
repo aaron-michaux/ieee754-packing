@@ -17,7 +17,7 @@ test_main.o: test_main.cpp
 main.o: main.cpp
 	$(CC) -x c++ $(CPP_FLAGS) -c main.cpp -o main.o
 
-ieee-packing_tests.o: main.cpp
+ieee-packing_tests.o: ieee-packing_tests.cpp
 	$(CC) -x c++ $(CPP_FLAGS) -c ieee-packing_tests.cpp -o ieee-packing_tests.o
 
 clean:

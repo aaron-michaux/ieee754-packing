@@ -146,26 +146,32 @@ template<typename I, int EXP_DIG> auto unpack_float(const I packed)
 
    return sign_bit ? -out : out;
 }
+
 } // namespace detail
 
-inline uint32_t pack_f32(float x)
+template<typename F> auto pack_float(F x)
 {
-   // 8 bit exponent (ieee754 float)
-   return detail::pack_float<float, 8>(x);
+   using I = typename std::conditional_t<sizeof(F) == 8, uint64_t, uint32_t>;
+#ifdef __STDC_IEC_559__
+   return *reinterpret_cast<I*>(&x);
+#else
+   if constexpr(sizeof(F) == 8) return detail::pack_float<F, 11>(x);
+   return detail::pack_float<F, 8>(x);
+#endif
 }
 
-inline uint64_t pack_f64(double x)
+template<typename I> auto unpack_float(I x)
 {
-   // 11 bit exponent (ieee754 double)
-   return detail::pack_float<double, 11>(x);
+   using F = typename std::conditional_t<sizeof(I) == 8, double, float>;
+#ifdef __STDC_IEC_559__
+   return *reinterpret_cast<F*>(&x);
+#else
+   if constexpr(sizeof(F) == 8) return detail::unpack_float<F, 11>(x);
+   return detail::unpack_float<T, 8>(x);
+#endif
 }
 
-inline float unpack_f32(uint32_t x)
-{
-   return detail::unpack_float<uint32_t, 8>(x);
-}
-
-inline double unpack_f64(uint64_t x)
-{
-   return detail::unpack_float<uint64_t, 11>(x);
-}
+inline uint32_t pack_f32(float x) { return pack_float(x); }
+inline uint64_t pack_f64(double x) { return pack_float(x); }
+inline float unpack_f32(uint32_t x) { return unpack_float(x); }
+inline double unpack_f64(uint64_t x) { return unpack_float(x); }

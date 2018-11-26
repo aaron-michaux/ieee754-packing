@@ -3,7 +3,7 @@
 
 When it comes to serializing `float` and `double` in C/C++, the accepted wisdom is to stream them as text, or use some sort of library. I always thought this is unsatisfactory. Text can take up a lot of space, and it is sometimes impractical to use libraries. Besides, why the code bloat, when all you want to do is serialize some numbers!
 
-The code in `ieee-packing.hpp` serializes single and double precision floating point numbers using _only well definied C++_ features. As such, it should work on any hardware that supports 64bit integers. It is only as accurate as the standard library routines `std::frexp` and `std::ldexp`, and thus cannot be expected to be more accurate than `std::numeric_limits<T>::epsilon()`. However, it does work with denormalized (i.e., very very tiny) numbers.
+The code in `ieee-packing.hpp` serializes single and double precision floating point numbers using _only well definied C++_ features. As such, it should work on any hardware that supports 64bit integers. If `__STDC_IEC_559__` is defined, then the hardware already uses ieee754 formatted numbers, and they are bitcase (safely) to unsigned integer types. Otherwise, the code uses the standard library routines `std::frexp` and `std::ldexp` to extract the mantissa and exponent, to produce an ieee754 bitpattern. Although this works with denormalized (i.e., very very tiny) numbers, it cannot be expected to be more accurate than `std::numeric_limits<T>::epsilon()`.
 
 ieee754 uses 8 and 11 bits for the exponents of (respectively) floats and doubles. If your hardware does not use this many bits in its representation, then there will be a further loss of precision. This will be indicated by a failure in one of the test cases.
 
